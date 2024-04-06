@@ -7,7 +7,8 @@
   "license": "MIT",
   "scripts": {
     "create_instance": "npx ts-node create_instance.ts",
-    "fetch_accounts": "npx ts-node fetch_accounts.ts"
+    "fetch_accounts": "npx ts-node fetch_accounts.ts",
+    "fetch_ledger": "npx ts-node fetch_ledger.ts"
   },
   "dependencies": {
     "@aptos-labs/ts-sdk": "^1.11.0",
