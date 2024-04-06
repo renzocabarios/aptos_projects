@@ -9,6 +9,7 @@
     "create_instance": "npx ts-node create_instance.ts",
     "fetch_accounts": "npx ts-node fetch_accounts.ts",
     "fetch_ledger": "npx ts-node fetch_ledger.ts",
+    "generate_account": "npx ts-node generate_account.ts",
     "fetch_token": "npx ts-node fetch_token.ts"
   },
   "dependencies": {
