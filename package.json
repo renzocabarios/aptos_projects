@@ -6,7 +6,8 @@
   "author": "Renzo Cabarios <renzo.cabarios@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "create_instance": "npx ts-node create_instance.ts"
+    "create_instance": "npx ts-node create_instance.ts",
+    "fetch_accounts": "npx ts-node fetch_accounts.ts"
   },
   "dependencies": {
     "@aptos-labs/ts-sdk": "^1.11.0",
