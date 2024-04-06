@@ -1,0 +1,13 @@
+{
+  "name": "aptos_projects",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/renzocabarios/aptos_projects.git",
+  "author": "Renzo Cabarios <renzo.cabarios@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@aptos-labs/ts-sdk": "^1.11.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.4"
+  }
+}
