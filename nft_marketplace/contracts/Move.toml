@@ -1,0 +1,16 @@
+[package]
+name = "black_market"
+version = "1.0.0"
+authors = []
+
+[addresses]
+black_market = "0x539f880b3da2bc33d98b5efbf611eb76b6a980b0fdb15badb537767e0767d6e3"
+
+[dev-addresses]
+
+[dependencies.AptosFramework]
+git = "https://github.com/aptos-labs/aptos-framework.git"
+rev = "mainnet"
+subdir = "aptos-framework"
+
+[dev-dependencies]
