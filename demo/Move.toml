@@ -4,14 +4,11 @@ version = "1.0.0"
 authors = []
 
 [addresses]
-my_addrx = "0x42"
-std = "0x1"
-
-[dev-addresses]
+my_address = "_"
 
 [dependencies.AptosFramework]
 git = "https://github.com/aptos-labs/aptos-framework.git"
-rev = "mainnet"
+rev = "devnet"
 subdir = "aptos-framework"
 
 [dev-dependencies]

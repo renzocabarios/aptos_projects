@@ -1,4 +1,4 @@
-module my_addrx::Sample
+module my_address::Sample
 {
     use std::debug;
 
