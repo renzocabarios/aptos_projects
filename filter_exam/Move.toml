@@ -1,0 +1,17 @@
+[package]
+name = "tba_exam"
+version = "1.0.0"
+authors = []
+
+[addresses]
+tba_exam_addr='_'
+
+[dev-addresses]
+tba_exam_addr='0x2'
+
+[dependencies.AptosFramework]
+git = "https://github.com/aptos-labs/aptos-framework.git"
+rev = "testnet"
+subdir = "aptos-framework"
+
+[dev-dependencies]
