@@ -1,0 +1,17 @@
+[package]
+name = "objects"
+version = "1.0.0"
+authors = []
+
+[addresses]
+object_demo_addr='_'
+
+[dev-addresses]
+object_demo_addr='abdaa9fa1bac35a164df4c86ac0c07975bef4b5246a1c752d30c6005d71faa43'
+
+[dependencies.AptosFramework]
+git = "https://github.com/aptos-labs/aptos-framework.git"
+rev = "mainnet"
+subdir = "aptos-framework"
+
+[dev-dependencies]

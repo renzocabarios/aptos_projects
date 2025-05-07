@@ -1,0 +1,16 @@
+[package]
+name = "simple_amm"
+version = "1.0.0"
+authors = []
+
+[addresses]
+amm_addr='6845d99a3f6554eeedfa018bd769db4b57ba2060da680c79acc8ef63d414d86e'
+
+
+
+[dependencies.AptosFramework]
+git = "https://github.com/aptos-labs/aptos-framework.git"
+rev = "mainnet"
+subdir = "aptos-framework"
+
+[dev-dependencies]

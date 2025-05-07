@@ -1,0 +1,15 @@
+[package]
+name = "apt_game"
+version = "1.0.0"
+authors = []
+
+[addresses]
+apt_game_addr='6078628b28ca88bddc9f84d7c92d8e2b4c855f292fecac1d15fa1d00d5670fa9'
+
+
+[dependencies.AptosFramework]
+git = "https://github.com/aptos-labs/aptos-framework.git"
+rev = "mainnet"
+subdir = "aptos-framework"
+
+[dev-dependencies]

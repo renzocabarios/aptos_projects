@@ -1,0 +1,16 @@
+[package]
+name = "resources"
+version = "1.0.0"
+authors = []
+
+[addresses]
+resource_creator_addr='cd72ebce067da142f79b97e42fe4130bda79707b942edbd4bb2779050b217317'
+
+[dev-addresses]
+
+[dependencies.AptosFramework]
+git = "https://github.com/aptos-labs/aptos-framework.git"
+rev = "mainnet"
+subdir = "aptos-framework"
+
+[dev-dependencies]
