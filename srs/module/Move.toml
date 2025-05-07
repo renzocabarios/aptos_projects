@@ -1,0 +1,16 @@
+[package]
+name = "module_test"
+version = "1.0.0"
+authors = []
+
+[addresses]
+module_test_addr='5f3f301f6160e7efc52ce1fa58bb791acf9781d4d418cd13625a36f837d72e22'
+
+[dev-addresses]
+
+[dependencies.AptosFramework]
+git = "https://github.com/aptos-labs/aptos-framework.git"
+rev = "mainnet"
+subdir = "aptos-framework"
+
+[dev-dependencies]
