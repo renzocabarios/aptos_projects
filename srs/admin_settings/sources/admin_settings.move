@@ -1,4 +1,4 @@
-module module_test_addr::module_test {
+module admin_settings_addr::admin_settings {
 
     struct AdminSettings has key {
         transaction_fee: u64
