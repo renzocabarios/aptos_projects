@@ -1,0 +1,15 @@
+[package]
+name = "nft_collection"
+version = "1.0.0"
+authors = []
+
+[addresses]
+nft_collection_addr='19226f197777cdbe77060f79f6d33004e4333ddb48996dd0a44d807a6b3337ff'
+
+[dev-addresses]
+
+[dependencies]
+AptosFramework = { git = "https://github.com/aptos-labs/aptos-framework.git", subdir = "aptos-framework", rev = "mainnet" }
+AptosTokenObjects = { git = "https://github.com/aptos-labs/aptos-framework.git", subdir = "aptos-token-objects", rev = "mainnet" }
+
+[dev-dependencies]
