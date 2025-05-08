@@ -1,0 +1,16 @@
+[package]
+name = "vector_demo"
+version = "1.0.0"
+authors = []
+
+[addresses]
+vector_demo_addr='70358faa8ecc7f15eea8762cc7917d5652d374150a6367307d7630621a53344b'
+
+[dev-addresses]
+
+[dependencies.AptosFramework]
+git = "https://github.com/aptos-labs/aptos-framework.git"
+rev = "mainnet"
+subdir = "aptos-framework"
+
+[dev-dependencies]
