@@ -1,0 +1,16 @@
+[package]
+name = "nft_launchpad"
+version = "1.0.0"
+authors = []
+
+[addresses]
+nft_launchpad_addr='3217365f5a028c9ca3326b67bc2b48a3886fba7ee895e26f75e85c779ad38bde'
+
+[dev-addresses]
+
+[dependencies]
+AptosFramework = { git = "https://github.com/aptos-labs/aptos-framework.git", subdir = "aptos-framework", rev = "mainnet" }
+AptosTokenObjects = { git = "https://github.com/aptos-labs/aptos-framework.git", subdir = "aptos-token-objects", rev = "mainnet" }
+
+
+[dev-dependencies]
