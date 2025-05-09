@@ -1,0 +1,16 @@
+[package]
+name = "merkle_trees"
+version = "1.0.0"
+authors = []
+
+[addresses]
+merkle_tree_addr='14625616f5e87b45e98590b61f36558d4f316e76c0599bc4f0a7bae559fb0226'
+
+[dev-addresses]
+
+[dependencies.AptosFramework]
+git = "https://github.com/aptos-labs/aptos-framework.git"
+rev = "mainnet"
+subdir = "aptos-framework"
+
+[dev-dependencies]
