@@ -1,35 +1,33 @@
 module vector_demo_addr::vector_demo {
-    use std::vector;
     use std::string::{Self, String};
-
-    struct User has store {
-        first_name: String,
-        last_name: String,
-    }
+    use std::vector;
 
     struct Database has key {
-        users: vector<User>
+        users: vector<String>
     }
 
-    fun init_module(user_signer: &signer) {
-        move_to(user_signer, Database {
-            users: vector[],
-        })
+    fun init_module(deployer: &signer) {
+        move_to(deployer, Database {
+            users: vector[]
+        });
     }
 
-    public entry fun add_user(first_name: String, last_name: String) acquires Database {
+    public entry fun push_users(user: String) acquires Database {
         let database = borrow_global_mut<Database>(@vector_demo_addr);
-        let user = User {
-            first_name,
-            last_name
-        };
-        
-        vector::push_back(&mut database.users, user);
-    }
 
-    #[test(a = @vector_demo_addr)]
-    fun test_function(a: signer) acquires Database {
-        init_module(&a);
-        add_user(string::utf8(b"test"), string::utf8(b"test"));
+        vector::push_back(&mut database.users, user);
+    } 
+
+    public entry fun pop_users() acquires Database {
+        let database = borrow_global_mut<Database>(@vector_demo_addr);
+        vector::pop_back(&mut database.users);
+    } 
+
+    #[test(deployer = @vector_demo_addr)]
+    fun test_function(deployer: signer) acquires Database {
+        init_module(&deployer);
+
+        push_users(string::utf8(b"John"));
+        pop_users();
     }
 }
