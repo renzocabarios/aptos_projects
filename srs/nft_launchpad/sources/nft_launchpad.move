@@ -54,7 +54,7 @@ module nft_launchpad_addr::nft_launchpad {
         )
     }
 
-    public entry fun create_token(minter: &signer) {
+    public entry fun create_token(minter: &signer) acquires CollectionCreator {
         let creator_extend_ref = &borrow_global<CollectionCreator>(@nft_launchpad_addr).extend_ref;
         let creator = &object::generate_signer_for_extending(creator_extend_ref);
 
@@ -84,7 +84,7 @@ module nft_launchpad_addr::nft_launchpad {
     }
 
     #[test(deployer = @nft_launchpad_addr, minter = @0x123)]
-    fun test_function(deployer: signer, minter: signer) {
+    fun test_function(deployer: signer, minter: signer) acquires CollectionCreator {
         init_module(&deployer);
         create_token(&minter);
     }
