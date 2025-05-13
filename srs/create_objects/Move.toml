@@ -1,0 +1,16 @@
+[package]
+name = "create_objects"
+version = "1.0.0"
+authors = []
+
+[addresses]
+create_objects_addr='503810a89bbbab9e4f1b96ecd02cec436ac3fd5e25e036263f42883778265612'
+
+[dev-addresses]
+
+[dependencies.AptosFramework]
+git = "https://github.com/aptos-labs/aptos-framework.git"
+rev = "mainnet"
+subdir = "aptos-framework"
+
+[dev-dependencies]
