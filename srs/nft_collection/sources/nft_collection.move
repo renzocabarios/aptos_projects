@@ -1,13 +1,7 @@
 module nft_collection_addr::nft_collection {
+    use aptos_token_objects::aptos_token;
     use aptos_framework::object::{Self};
-    use aptos_token_objects::aptos_token::{Self};
     use std::string;
-
-    const DESCRIPTION: vector<u8> = b"Move Spiders are awesome";
-    const COLLECTION_NAME: vector<u8> = b"Move Spiders";
-    const URI: vector<u8> = b"";
-
-    fun init_module(deployer: &signer) {
 
         // creator: &signer,
         // description: String,
@@ -25,12 +19,13 @@ module nft_collection_addr::nft_collection {
         // tokens_freezable_by_creator: bool,
         // royalty_numerator: u64,
         // royalty_denominator: u64,
+    fun init_module(deployer: &signer) {
         aptos_token::create_collection(
             deployer,
-            string::utf8(DESCRIPTION),
+            string::utf8(b"Collection Description"),
             1000,
-            string::utf8(COLLECTION_NAME),
-            string::utf8(URI),
+            string::utf8(b"Collection Name"),
+            string::utf8(b"Collection Uri"),
             true,
             true,
             true,
@@ -40,36 +35,28 @@ module nft_collection_addr::nft_collection {
             true,
             true,
             true,
-            0, 
-			100,
-      );
-    }
-    
-    fun create_token(creator: &signer, owner: address) {
-
-        // creator: &signer,
-        // collection: String,
-        // description: String,
-        // name: String,
-        // uri: String,
-        // property_keys: vector<String>,
-        // property_types: vector<String>,
-        // property_values: vector<vector<u8>>,
-        let nft = aptos_token::mint_token_object(
-            creator,
-            string::utf8(COLLECTION_NAME),
-            string::utf8(COLLECTION_NAME),
-            string::utf8(COLLECTION_NAME),
-            string::utf8(URI),
-            vector[],
-            vector[],
-            vector[],
-      );
-      object::transfer(creator, nft, owner);
+            5,
+            100
+        );
     }
 
-	#[test(a = @nft_collection_addr)]
-	fun test_function(a: signer){
-		init_module(&a);
-	}
+    fun create_token(deployer: &signer) {
+
+        aptos_token::mint_token_object(
+            deployer,
+            string::utf8(b"Collection Name"),
+            string::utf8(b"Collection Description"),
+            string::utf8(b"Token Name"),
+            string::utf8(b"Collection Uri"),
+            vector[],
+            vector[],
+            vector[],
+        );
+    }
+
+    #[test(deployer = @nft_collection_addr)]
+    fun test_function(deployer: signer) {
+        init_module(&deployer);
+        create_token(&deployer);
+    }
 }
