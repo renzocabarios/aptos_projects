@@ -1,23 +1,22 @@
 module nft_launchpad_addr::nft_launchpad {
+    use aptos_token_objects::aptos_token;
     use std::string;
-    use aptos_token_objects::aptos_token::{Self};
-    use aptos_framework::object::{Self, ExtendRef};
     use std::signer;
+    use aptos_framework::object::{Self, ExtendRef};
 
     struct CollectionCreator has key {
         extend_ref: ExtendRef
     }
 
     fun init_module(deployer: &signer) {
-
         let creator_constructor_ref = &object::create_object(@nft_launchpad_addr);
         let extend_ref = object::generate_extend_ref(creator_constructor_ref);
-
         move_to(deployer, CollectionCreator {
             extend_ref
         });
 
         let creator_signer = &object::generate_signer(creator_constructor_ref);
+        
         // creator: &signer,
         // description: String,
         // max_supply: u64,
@@ -51,14 +50,14 @@ module nft_launchpad_addr::nft_launchpad {
             true,
             5,
             100
-        )
+        );
     }
 
     public entry fun create_token(minter: &signer) acquires CollectionCreator {
         let creator_extend_ref = &borrow_global<CollectionCreator>(@nft_launchpad_addr).extend_ref;
+
         let creator = &object::generate_signer_for_extending(creator_extend_ref);
-
-
+        
         // creator: &signer,
         // collection: String,
         // description: String,
@@ -70,16 +69,14 @@ module nft_launchpad_addr::nft_launchpad {
         let nft = aptos_token::mint_token_object(
             creator,
             string::utf8(b"Collection Name"),
-            string::utf8(b"Collection Description"),
+            string::utf8(b"Token Description"),
             string::utf8(b"Token Name"),
-            string::utf8(b"Collectiong Uri"),
+            string::utf8(b"Token Uri"),
             vector[],
             vector[],
             vector[],
         );
-
         let minter_addr = signer::address_of(minter);
-
         object::transfer(creator, nft, minter_addr);
     }
 
@@ -88,6 +85,4 @@ module nft_launchpad_addr::nft_launchpad {
         init_module(&deployer);
         create_token(&minter);
     }
-
-
 }
