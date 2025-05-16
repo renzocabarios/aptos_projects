@@ -1,0 +1,58 @@
+module merkle_tree_addr::merkle_tree {
+    use std::vector;
+    use std::signer;
+    use std::hash;
+    use std::error;
+    use std::option;
+    use std::string;
+    use std::bcs;
+
+    struct WhitelistSettings has key {
+        merkle_root: vector<u8>,
+    }
+
+    public fun init(admin: &signer, merkle_root: vector<u8>) {
+        move_to(admin, WhitelistSettings {
+            merkle_root
+        });
+    }
+
+    public fun get_root(): vector<u8> acquires WhitelistSettings {
+        borrow_global<WhitelistSettings>(@merkle_tree_addr).merkle_root
+    }
+
+    // /// Verify that the signer is whitelisted using the proof
+    // public fun verify_whitelisted(user: address, proof: vector<vector<u8>>) acquires WhitelistSettings {
+    //     let root = &borrow_global<WhitelistSettings>(@merkle_tree_addr).merkle_root;
+
+    //     let addr_byte = bcs::to_bytes<address>(&user);
+    //     let leaf = hash::sha3_256(addr_byte);
+    //     let computed_hash = compute_merkle_root(leaf, proof);
+
+    //     assert!(computed_hash == *root, error::invalid_argument(1));
+    // }
+
+    // /// Rebuilds the merkle root from leaf and proof
+    // fun compute_merkle_root(hash: vector<u8>, proof: vector<vector<u8>>): vector<u8> {
+    //     let i = 0;
+    //     let len = vector::length(&proof);
+    //     while (i < len) {
+    //         let proof_elem = vector::borrow_mut(&mut proof, i);
+
+    //         // Sort before hash (directionless Merkle proof)
+    //         // let combined = if (*hash < *proof_elem) {
+    //         //     vector::append(hash, *proof_elem)
+    //         // } else {
+    //         //     vector::append(*proof_elem, hash)
+    //         // };
+    //         vector::append<u8>(proof_elem, hash);
+    
+
+
+    //         hash = hash::sha3_256(proof_elem);
+    //         i = i + 1;
+    //     };
+
+    //     hash
+    // }
+}

@@ -1,130 +1,171 @@
 module merkle_tree_addr::merkle_tree {
-    
     use std::vector;
-    use std::string::{Self, String};
-    use std::hash;
-    use std::signer;
-    use std::bcs;
-    use aptos_std::math64;
-    use aptos_framework::account;
-    use aptos_framework::event;
     use aptos_std::aptos_hash;
 
-    struct Whitelist has key {
-        root: vector<u8>
+    /// Root bytes length isn't 32 bytes
+    const E_ROOT_BYTES_LENGTH_MISMATCH: u64 = 1;
+
+    /// Leaf bytes length isn't 32 bytes
+    const E_LEAF_BYTES_LENGTH_MISMATCH: u64 = 2;
+
+
+    struct WhitelistSettings has key {
+        merkle_root: vector<u8>,
     }
 
-    fun init_module(deployer: &signer) {
-        move_to(deployer, Whitelist {
-            root: vector[]
-        })
+    fun init_module(admin: &signer) {
+        move_to(admin, WhitelistSettings {
+            merkle_root: vector[]
+        });
     }
 
-    public entry fun update_root(root: vector<u8>) acquires Whitelist {
-        let whitelist = borrow_global_mut<Whitelist>(@merkle_tree_addr);
-        whitelist.root = root;
+    public entry fun set_root(admin: &signer, merkle_root: vector<u8>) acquires WhitelistSettings {
+        let settings = borrow_global_mut<WhitelistSettings>(@merkle_tree_addr);
+        settings.merkle_root = merkle_root;
+    
     }
 
-    // acquires Root,Check
     #[view]
-    public fun verify(
-        account: address, 
-        proofs: vector<vector<u8>>,
-        _leaf: vector<u8>
-    ): bool acquires Whitelist { 
-        let account_addr = account;
-        let whitelist = borrow_global<Whitelist>(@merkle_tree_addr);
-        let addr_byte = bcs::to_bytes<address>(&account_addr);
-        vector::append(&mut addr_byte, _leaf);
-        let leaf = aptos_hash::keccak256(addr_byte);
-        let is_valid = verify_merkle(leaf, proofs, whitelist.root);
-        is_valid
+    public fun get_root(): vector<u8> acquires WhitelistSettings {
+        borrow_global<WhitelistSettings>(@merkle_tree_addr).merkle_root
     }
 
-    fun verify_merkle(
-        leaf: vector<u8>,
-        proofs: vector<vector<u8>>,
-        root: vector<u8>,
-    ): bool  {
-        let computedHash = &leaf;
-
-        let i = 0u64; 
-        let proofs_length = vector::length(&proofs);
-        while (i < proofs_length) {
-        let proofElement = vector::borrow(&proofs, i);
-
-        if (compare_vector(*computedHash, *proofElement) <= COMPARE_EQUAL) {
-            // Hash(current computed hash + current element of the proof)
-            let combined_hash = vector::empty<u8>();
-            vector::append(&mut combined_hash, *computedHash);
-            vector::append(&mut combined_hash, *proofElement);
-            computedHash = &hash::sha2_256(combined_hash);
-        } else {
-            // Hash(current element of the proof + current computed hash)
-            let combined_hash = vector::empty<u8>();
-            vector::append(&mut combined_hash, *proofElement);
-            vector::append(&mut combined_hash, *computedHash);
-            computedHash = &hash::sha2_256(combined_hash);
-        };
-        i = i + 1;
-        };
-
-        // Check if the computed hash (root) is equal to the provided root
-        compare_vector(*computedHash, root) == COMPARE_EQUAL
+    #[view]
+    public fun get_leaf(leaf: vector<u8>): vector<u8>  {
+        leaf
     }
 
-    const COMPARE_EQUAL: u8 = 127u8;
 
-    fun compare_vector(
-        x: vector<u8>,
-        y: vector<u8>,
-    ): u8 {
-        let x_length = vector::length(&x);
-        let y_length = vector::length(&y);
-        let min_length = math64::min(x_length, y_length);
 
-        let i = 0;
-        while (i < min_length) {
-        let x_i = vector::borrow(&x, i);
-        let y_i = vector::borrow(&y, i);
-        let compare_result = compare_u8(*x_i, *y_i);
-        if (compare_result != COMPARE_EQUAL) {
-            return compare_result
+    /// Verifies with a given roof and a given leaf for a merkle tree
+    #[view]
+    public fun verify(proof: vector<vector<u8>>, leaf: vector<u8>): bool acquires WhitelistSettings {
+        let computedHash = leaf;
+        let root = borrow_global<WhitelistSettings>(@merkle_tree_addr).merkle_root;
+
+        assert!(vector::length(&root) == 32, E_ROOT_BYTES_LENGTH_MISMATCH);
+        assert!(vector::length(&leaf) == 32, E_LEAF_BYTES_LENGTH_MISMATCH);
+
+        // Go through each proof element, and ensure they're ordered correctly to hash (largest last)
+        vector::for_each(proof, |proofElement| {
+            if (compare_vector(&computedHash, &proofElement)) {
+                vector::append(&mut computedHash, proofElement);
+                computedHash = aptos_hash::keccak256(computedHash)
+            } else {
+                vector::append(&mut proofElement, computedHash);
+                computedHash = aptos_hash::keccak256(proofElement)
+            };
+        });
+        computedHash == root
+    }
+    /// Returns true if a is greater than b
+    fun compare_vector(a: &vector<u8>, b: &vector<u8>): bool {
+        let index = 0;
+        let length = vector::length(a);
+
+        // If vector b is ever greater than vector a, return true, otherwise false
+        while (index < length) {
+            if (*vector::borrow(a, index) > *vector::borrow(b, index)) {
+                return false
+            };
+            if (*vector::borrow(a, index) < *vector::borrow(b, index)) {
+                return true
+            };
+            index = index + 1;
         };
-        i = i + 1;
-        };
 
-        compare_u64(x_length, y_length)
+        // If exactly the same, it's always true (though it shouldn't matter)
+        true
     }
 
-    fun compare_u8(
-        x: u8,
-        y: u8,
-    ): u8 {
-        if (x > y) {
-        return 255
-        };
-        if (x < y) {
-        return 0
-        };
-        COMPARE_EQUAL
+    #[view]
+    public fun return_proof(proof: vector<vector<u8>>): vector<vector<u8>> {
+        proof
     }
 
-    fun compare_u64(
-        x: u64,
-        y: u64,
-    ): u8 {
-        if (x > y) {
-        return 255
-        };
-        if (x < y) {
-        return 0
-        };
-        COMPARE_EQUAL
-    }
+
+
+    #[test_only]
+    use std::debug;
 
     #[test(deployer = @merkle_tree_addr)]
-    fun test_function(deployer: signer) {
+    fun test_merkle(deployer: signer) acquires WhitelistSettings{
+        let leaf1 =  x"5f16f4c7f149ac4f9510d9cf8cf384038ad348b3bcdc01915f95de12df9d1b02";
+        let leaf2 = x"5f16f4c7f149ac4f9510d9cf8cf384038ad348b3bcdc01915f95de12df9d1b02";
+        let leaf3 = x"c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470";
+        let leaf4 = x"0da6e343c6ae1c7615934b7a8150d3512a624666036c06a92a56bbdaa4099751";
+        // finding out the root
+        let root1 = find_root(leaf1, leaf2);
+        let root2 = find_root(leaf3, leaf4);
+        let final_root = find_root(root1, root2);
+        //the proofs
+        let proof1 = vector[leaf2, root2];
+        let proof2 = vector[leaf1, root2];
+        let proof3 = vector[leaf4, root1];
+        let proof4 = vector[leaf3, root1];
+
         init_module(&deployer);
+        set_root(&deployer, final_root);
+
+        let verified = verify(proof1, leaf1);
+
+        debug::print(&verified);
+        
+        //here
+        // assert!(verify(proof1, final_root, leaf1), 99);
+        // assert!(verify(proof2, final_root, leaf2), 100);
+        // assert!(verify(proof3, final_root, leaf3), 101);
+        // assert!(verify(proof4, final_root, leaf4), 102);
+    }
+
+    // #[test]
+    // #[expected_failure(abort_code = 196609, location = Self)]
+    // fun test_failure() {
+    //     let leaf1 = x"d4dee0beab2d53f2cc83e567171bd2820e49898130a22622b10ead383e90bd77";
+    //     let leaf2 = x"5f16f4c7f149ac4f9510d9cf8cf384038ad348b3bcdc01915f95de12df9d1b02";
+    //     let leaf3 = x"c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470";
+    //     let leaf4 = x"0da6e343c6ae1c7615934b7a8150d3512a624666036c06a92a56bbdaa4099751";
+    //     // finding out the root
+    //     let root1 = find_root(leaf1, leaf2);
+    //     let root2 = find_root(leaf3, leaf4);
+    //     let final_root = find_root(root1, root2);
+    //     //the proofs
+    //     let proof1 = vector[leaf2, root2];
+    //     let proof2 = vector[leaf1, root2];
+    //     let proof3 = vector[leaf4, root1];
+    //     let proof4 = vector[leaf3, root1];
+    //     //here
+    //     // assert!(
+    //     //     verify(proof1, final_root, x"0e5751c026e543b2e8ab2eb06099daa1d1e5df47778f7787faab45cdf12fe3a8"),
+    //     //     196609
+    //     // );
+    //     // assert!(
+    //     //     verify(proof2, final_root, x"0e5751c026e543b2e8ab2eb06099daa1d1e5df47778f7787faab45cdf12fe3a8"),
+    //     //     196609
+    //     // );
+    //     // assert!(
+    //     //     verify(proof3, final_root, x"0e5751c026e543b2e8ab2eb06099daa1d1e5df47778f7787faab45cdf12fe3a8"),
+    //     //     196609
+    //     // );
+    //     // assert!(
+    //     //     verify(proof4, final_root, x"0e5751c026e543b2e8ab2eb06099daa1d1e5df47778f7787faab45cdf12fe3a8"),
+    //     //     196609
+    //     // );
+    // }
+
+    /// Finds the root of the merkle proof
+    public fun find_root(leaf1: vector<u8>, leaf2: vector<u8>): vector<u8> {
+        let root = vector<u8>[];
+        if (compare_vector(&leaf1, &leaf2)) {
+            vector::append(&mut root, leaf1);
+            vector::append(&mut root, leaf2);
+            root = aptos_hash::keccak256(root);
+        }
+        else {
+            vector::append(&mut root, leaf2);
+            vector::append(&mut root, leaf1);
+            root = aptos_hash::keccak256(root);
+        };
+        root
     }
 }
