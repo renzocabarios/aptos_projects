@@ -1,7 +1,6 @@
 module fungible_asset_addr::fungible_asset {
-    use aptos_framework::fungible_asset::{Self, MintRef, TransferRef, BurnRef, Metadata, FungibleStore, FungibleAsset};
+    use aptos_framework::fungible_asset::{Self, Metadata};
     use aptos_framework::primary_fungible_store;
-
     
     use std::option;
     use std::string;
