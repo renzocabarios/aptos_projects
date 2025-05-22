@@ -1,0 +1,43 @@
+module merkle_tree_addr::merkle_tree {
+
+    use std::signer;
+    use std::vector;
+    use std::error;
+    use std::string;
+    use aptos_std::keccak256;
+
+    const E_NOT_WHITELISTED: u64 = 0;
+
+    struct WhitelistSettings has key {
+        merkle_root: vector<u8>,
+    }
+
+   fun init_module(s: &signer) {
+        move_to(s, WhitelistSettings { merkle_root: root });
+    }
+
+    public entry fun set_root(s: &signer, root: vector<u8>) acquires  WhitelistSettings {
+        let  settings = borrow_global_mut<WhitelistSettings>();
+        settings.merkle_root = root;
+    }
+
+    public fun get_root(): vector<u8> acquires WhitelistSettings {
+        borrow_global<WhitelistSettings>(signer::address_of(@whitelist_addr)).merkle_root
+    }
+
+    public fun verify(proof: vector<vector<u8>>, leaf: vector<u8>) acquires WhitelistSettings {
+        let  computed = leaf;
+        let root = borrow_global<WhitelistSettings>(signer::address_of(@whitelist_addr)).merkle_root;
+
+        let i = 0;
+        while (i < vector::length(&proof)) {
+            let proof_elem = *vector::borrow(&proof, i);
+            computed = keccak256::keccak256(vector::concat(computed, proof_elem));
+            i = i + 1;
+        };
+
+        if (computed != root) {
+            error::abort_code(E_NOT_WHITELISTED);
+        }
+    }
+}

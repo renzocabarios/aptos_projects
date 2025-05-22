@@ -4,7 +4,7 @@ version = "1.0.0"
 authors = []
 
 [addresses]
-merkle_tree_addr='84935923d26c0f5d1109ccb056d45d7ae3fc6f1fffcc45bfb0c3503d85fca1f1'
+merkle_tree_addr='66c47e01a2ac3adf3adc6fae316dace258ebdd5e387287fbf9ecf515b8f7b87e'
 admin_addr='0x2a9ed02bf1adb72ce456af9d6fb9601ff5267806f3f1e724f17ea1002e20378f'
 
 [dev-addresses]

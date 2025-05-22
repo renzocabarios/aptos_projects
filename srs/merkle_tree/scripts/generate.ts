@@ -70,7 +70,7 @@ async function main() {
   // 0x292d11a7a7f6e72bd0c8943d3e4a5e4ca38245cda3cb20cb92312cccb91632a2
   const leaves = [
     "0x2a9ed02bf1adb72ce456af9d6fb9601ff5267806f3f1e724f17ea1002e20378f",
-    ...Array.from({ length: 4 }, (_, i) =>
+    ...Array.from({ length: 3 }, (_, i) =>
       Account.generate().accountAddress.toString()
     ),
   ].sort();
@@ -84,16 +84,20 @@ async function main() {
 
   const root = tree[0][0];
   const proof = getProof(tree, targetLeaf);
-  const leafBytes = hexToBytes(keccak256HexFromAddress(""));
+  const leafBytes = hexToBytes(
+    keccak256HexFromAddress(
+      "0x2a9ed02bf1adb72ce456af9d6fb9601ff5267806f3f1e724f17ea1002e20378f"
+    )
+  );
 
-  console.log("Merkle Root (hex):", root);
+  // console.log("Merkle Root (hex):", root);
   console.log("Merkle Root (bytes):", hexToBytes(root));
 
   console.log("Proof (bytes):", proof.map(hexToBytes));
-  console.log(
-    "Proof (hex):",
-    proof.map((addressHex) => addressHex.slice(2))
-  );
+  // console.log(
+  //   "Proof (hex):",
+  //   proof.map((addressHex) => addressHex.slice(2))
+  // );
   console.log("Leaf (bytes):", leafBytes);
 
   console.log(
